@@ -1,9 +1,9 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <h2>Contact Name</h2>
+    <div class="panel-heading" style="height: 170px">
+        <h4>Contact Name</h4>
         
         <div class="pull-left">
-            Image
+            <img [src]="contact.imageUrl" style="max-height: 100px;">
         </div>
         <div class="pull-right">
             <a class="btn btn-primary">Edit</a>
@@ -12,8 +12,7 @@
     </div>
 
     <div class="panel-body">
-        Contact Email
-        <br>
-        Contact Phone
+        <p class="list-group-item-heading">Contact Email</p>
+        <p class="list-group-item-heading">Contact Phone</p>
     </div>
   </div>

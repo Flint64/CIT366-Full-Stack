@@ -8,10 +8,9 @@ import { Contact } from '../contacts.model';
 })
 export class ContactListComponent implements OnInit {
 
-  group = [];
   contacts = [
-    new Contact("1", "Bro. Jackson", "Jacksonk@byui.edu","208-496-3771", "https://web.byui.edu/Directory/Employee/jacksonk.jpg", this.group),
-    new Contact("2", "Bro. Barzee", "barzeer@byui.edu","208-496-3768", "https://web.byui.edu/Directory/Employee/barzeer.jpg", this.group)
+    new Contact("1", "Bro. Jackson", "Jacksonk@byui.edu","208-496-3771", "https://web.byui.edu/Directory/Employee/jacksonk.jpg", null),
+    new Contact("2", "Bro. Barzee", "barzeer@byui.edu","208-496-3768", "https://web.byui.edu/Directory/Employee/barzeer.jpg", null)
   ];
 
   constructor() { }
