@@ -21,6 +21,9 @@ export class MessageEditComponent implements OnInit {
 
     this.addMessageEvent.emit(message);
 
+    this.msgText.nativeElement.value = "";
+    this.subject.nativeElement.value = "";
+
   }
 
   onClear(){
