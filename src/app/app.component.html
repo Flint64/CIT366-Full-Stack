@@ -1,7 +1,5 @@
-<cms-header (selectedFeatureEvent)="switchView($event)" ></cms-header>
+<cms-header></cms-header>
 
 <div class="container pull-left">
-    <cms-documents *ngIf="pageSelect === 'documents'" ></cms-documents>
-    <cms-message-list *ngIf="pageSelect === 'messages'" ></cms-message-list>
-    <cms-contacts *ngIf="pageSelect === 'contacts'" ></cms-contacts>
+    <router-outlet></router-outlet>
 </div>

@@ -6,8 +6,8 @@
             <img [src]="contact.imageUrl" style="max-height: 100px;">
         </div>
         <div class="pull-right">
-            <a class="btn btn-primary editBtn">Edit</a>
-            <a class="btn btn-danger">Delete</a>
+            <a [routerLink]="['edit']" class="btn btn-primary editBtn">Edit</a>
+            <a (click)="onDelete()" class="btn btn-danger">Delete</a>
         </div> 
     </div>
 
