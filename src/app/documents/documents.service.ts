@@ -79,17 +79,18 @@ export class DocumentsService {
   updateDocument(originalDocument: Document, newDocument: Document) {
     if (originalDocument === null || newDocument === null){
       return;
-    } else {
+    }
+
       const pos = this.documents.indexOf(originalDocument);
       if (pos < 0){
         return;
-      } else {
+      }
+      
         newDocument.id = originalDocument.id;
-        document[pos] = newDocument;
+        this.documents[pos] = newDocument;
+
         let documentsListClone = this.documents.slice();
         this.documentListChangedEvent.next(documentsListClone);
-      }
-    }
   }
 
 }
