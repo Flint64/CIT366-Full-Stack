@@ -12,6 +12,7 @@ export class ContactListComponent implements OnInit, OnDestroy {
 
   contacts: Contact[] = [];
   private subscription: Subscription;
+  term: string;
 
   // onSelected(contact: Contact){
     // this.contactService.contactSelectedEvent.emit(contact);
@@ -20,7 +21,7 @@ export class ContactListComponent implements OnInit, OnDestroy {
   constructor(private contactService: ContactService) { }
 
   ngOnInit() {
-    this.contacts = this.contactService.getContacts();
+    this.contactService.getContacts();
     this.subscription = this.contactService.contactChangedEvent.subscribe((contacts: Contact[]) => {
       this.contacts = contacts;
     });
@@ -30,4 +31,11 @@ export class ContactListComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  onKeyPress(value: string){
+    this.term = value;
+  }
+
 }
+
+// This was on the search icon
+// (click)="search(searchBox.value)"
