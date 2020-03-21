@@ -3,18 +3,18 @@ import { Message } from './message.model';
 import { MOCKMESSAGES } from './MOCKMESSAGES';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
+import { ContactService } from '../contacts/contact.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessagesService {
 
-  messageChangeEvent = new EventEmitter<Message[]>();
+  messageChangeEvent = new Subject<Message[]>();
   maxMessageId: number;
-  messages: Message[];
+  messages: Message[] = [];
 
-  constructor(private http: HttpClient) { 
-    this.getMessages();
+  constructor(private http: HttpClient, private contactService: ContactService) {
   }
 
   getMaxId(): number {
@@ -28,32 +28,20 @@ export class MessagesService {
     return maxId;
   }
 
-  getMessages(){
-    this.http.get('https://fir-e1179.firebaseio.com/messages.json').subscribe(
-      // success function
-    (messages: Message[] ) => {
-      this.messages = messages
-      this.maxMessageId = this.getMaxId()
-      this.messageChangeEvent.next(messages.slice());
-      }
-    ),
-      (error: any) => {
-        console.log(error);
-      } 
-  }
+  getMessages() {
 
-  storeMessages(){
-    const messages = this.messages;
-    const messagesJSON = JSON.stringify(messages);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-      })
-    };
-    this.http.put('https://fir-e1179.firebaseio.com/messages.json', messagesJSON, httpOptions).subscribe(response => {
-      console.log(response);
-      this.messageChangeEvent.next(messages.slice());
-    });
+    this.contactService.getContacts();
+
+    this.http.get<{ message: string, messages: Message[] }>('http://localhost:3000/messages').subscribe(
+      // success function
+    (response) => {
+      this.messages = response.messages;
+      this.maxMessageId = this.getMaxId();
+      this.messageChangeEvent.next(this.messages.slice());
+      },
+      (error: any) => {
+        // console.log(error);
+      });
   }
 
   getMessage(id: string){
@@ -64,10 +52,22 @@ export class MessagesService {
     }
   }
 
-  addMessage(message: Message){
-    this.messages.push(message);
-    // this.messageChangeEvent.emit(this.messages.slice());
-    this.storeMessages();
+  addMessage(newMessage: Message) {
+    if (newMessage === null) {
+        return;
+      }
+  
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json'
+        });
+  
+        newMessage.id = '';
+        const strMessage = JSON.stringify(newMessage);
+  
+        this.http.post<{ message: string, messages: Message[] }>('http://localhost:3000/messages', strMessage, {headers: headers})
+          .subscribe(() => {
+            this.getMessages();
+          })
   }
 
 }

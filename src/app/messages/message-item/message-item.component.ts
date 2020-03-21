@@ -19,7 +19,12 @@ export class MessageItemComponent implements OnInit {
 
   ngOnInit() {
     let contact: Contact = this.contactService.getContact(this.message.sender);
-    this.messageSender = contact.name;
+
+    if (this.message.sender === "18"){
+      this.messageSender = "Travis";
+    } else {
+      this.messageSender = contact.name;
+    }
   }
 
 }

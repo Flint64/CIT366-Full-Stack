@@ -20,33 +20,33 @@ export class ContactService {
   }
 
   getContacts() {
-    this.http.get('https://fir-e1179.firebaseio.com/contacts.json').subscribe(
+    this.http.get<{ message: string, contacts: Contact[] }>('http://localhost:3000/contacts').subscribe(
       // success function
-    (contacts: Contact[] ) => {
-      this.contacts = contacts
-      this.maxContactId = this.getMaxId()
+    (response) => {
+      this.contacts = response.contacts;
+      this.maxContactId = this.getMaxId();
       this.contacts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-      this.contactChangedEvent.next(contacts.slice());
+      this.contactChangedEvent.next(this.contacts.slice());
       }
     ),
       (error: any) => {
         console.log(error);
-      } 
+      }
   }
 
-  storeContacts(){
-    const contacts = this.contacts;
-    const contactsJSON = JSON.stringify(contacts);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-      })
-    };
-    this.http.put('https://fir-e1179.firebaseio.com/contacts.json', contactsJSON, httpOptions).subscribe(response => {
-      console.log(response);
-      this.contactChangedEvent.next(contacts.slice());
-    });
-  }
+  // storeContacts(){
+  //   const contacts = this.contacts;
+  //   const contactsJSON = JSON.stringify(contacts);
+  //   const httpOptions = {
+  //     headers: new HttpHeaders({
+  //       'Content-Type':  'application/json',
+  //     })
+  //   };
+  //   this.http.put('https://fir-e1179.firebaseio.com/contacts.json', contactsJSON, httpOptions).subscribe(response => {
+  //     console.log(response);
+  //     this.contactChangedEvent.next(contacts.slice());
+  //   });
+  // }
 
   getContact(id: string): Contact{
     for (let contact of this.contacts){
@@ -61,16 +61,10 @@ export class ContactService {
       return;
     }
 
-    const pos = this.contacts.indexOf(contact);
-    if (pos < 0){
-      return;
-    }
-
-    this.contacts.splice(pos, 1);
-    const contactsListClone = this.contacts.slice();
-    // this.contactChangedEvent.next(contactsListClone);
-    // this.contactChangedEvent.next(this.contacts.slice());
-    this.storeContacts();
+    this.http.delete('http://localhost:3000/contacts/' + contact.id)
+      .subscribe(() => {
+        this.getContacts();
+      });
   }
 
   getMaxId(): number {
@@ -90,33 +84,42 @@ export class ContactService {
 
   addContact(newContact: Contact) {
     if (newContact === null) {
-      return;
-    } else {
-      console.log(this.maxContactId);
-      this.maxContactId++;
-      newContact.id = this.maxContactId.toString();
-      this.contacts.push(newContact);
-      let ContactsListClone = this.contacts.slice();
-      // this.contactChangedEvent.next(ContactsListClone);
-      this.storeContacts();
-    }
+        return;
+      }
+
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json'
+        });
+  
+        newContact.id = '';
+        const strContact = JSON.stringify(newContact);
+  
+        this.http.post<{ message: string, contacts: Contact[] }>('http://localhost:3000/contacts', strContact, {headers: headers})
+          .subscribe(() => {
+            this.getContacts();
+          })
   }
 
   updateContact(originalContact: Contact, newContact: Contact) {
     if (originalContact === null || newContact === null){
       return;
-    } 
+    }
 
       const pos = this.contacts.indexOf(originalContact);
       if (pos < 0){
         return;
       }
 
-        newContact.id = originalContact.id;
-        this.contacts[pos] = newContact;
-        
-        // let ContactsListClone = this.contacts.slice();
-        this.storeContacts();
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json'
+      });
+
+      const strContact = JSON.stringify(newContact);
+
+      this.http.put('http://localhost:3000/contacts/' + originalContact.id, strContact, {headers: headers})
+        .subscribe(() => {
+          this.getContacts();
+        })
   }
 
 }
